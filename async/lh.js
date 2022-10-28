@@ -12,9 +12,29 @@ const statPair = async (filename) => {
     return {filename, stats}
 }
 
-const srcDir = process.argv[2]
-glob(`${srcDir}/**/*.*`)
-    .then(files => Promise.all(files.map(f => statPair(f))))
-    .then(files => files.filter(f => f.stats.isFile()))
-    .then(files => Promise.all(files.map(f => lineCount(f.filename))))
-    .then(c => c.forEach(c => console.log(`${c.length}: ${c.filename}`)))
+const lh = async (fileGlob) => {
+    const files = await glob(fileGlob)
+
+    const stats = await Promise.all(files.map(f => statPair(f)))
+    
+    const lines = await Promise.all(
+        stats
+            .filter(f => f.stats.isFile())
+            .map(f => lineCount(f.filename))
+    )
+    
+    let lineHistogram = {}
+    for (const {_, length} of lines) {
+        if (!lineHistogram[length]) {
+            lineHistogram[length] = 1
+        } else {
+            lineHistogram[length] += 1
+        }   
+    }
+    
+    console.log(lineHistogram)
+}
+
+// example: ./**/*.*
+const fileGlob = process.argv[2]
+lh(fileGlob)

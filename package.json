@@ -5,6 +5,7 @@
         "fs-extra-promise": "^1.0.1",
         "glob": "^8.0.3",
         "glob-promise": "^5.0.0",
+        "js-yaml": "^4.1.0",
         "path": "^0.12.7"
     }
 }
